@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, View, Button } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import Quote from './js/component/Quote';
 import NewQuote from './js/component/NewQuote';
 
@@ -14,18 +15,30 @@ const data = [
 export default class App extends Component {
     state = { index: 0, showNewQuoteScreen: false, quotes: data };
 
+    _storeData(quotes) {
+        AsyncStorage.setItem('QUOTES', JSON.stringify(quotes));
+    }
+
+    _retrieveData = async () => {
+
+        let value = await AsyncStorage.getItem('QUOTES');
+        if (value != null) {
+            value = JSON.parse(value);
+            this.setState({ quotes: value })
+        }
+    }
+
     _addQoute = (text, author) => {
         let quotes = this.state.quotes
         if (text && author) {
             quotes.push({ text, author });
+            this._storeData(this.state.quotes);
         }
-        this.setState({ showNewQuoteScreen: false, quotes })
+        this.setState({ index: quotes.length - 1, showNewQuoteScreen: false, quotes })
     };
 
-    render() {
+    _displayNextQuote(buttontype) {
         let index = this.state.index;
-
-        const quote = this.state.quotes[index];
         let previousIndex = index - 1;
         let nextIndex = index + 1;
 
@@ -35,12 +48,35 @@ export default class App extends Component {
 
 
         if (previousIndex < 0) {
-            previousIndex = data.length - 1
+
+            previousIndex = this.state.quotes.length - 1
 
         }
 
+        if (buttontype == 'Vorheriger Zitat') {
+
+            this.setState({ index: previousIndex });
+
+        } else {
+
+            this.setState({ index: nextIndex });
+        }
+
+
+    }
+
+    componentDidMount() {
+
+        this._retrieveData();
+    }
+
+    render() {
+        let index = this.state.index;
+
+        const quote = this.state.quotes[index];
+
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
 
                 <View style={{ margin: 5 }}>
 
@@ -54,23 +90,23 @@ export default class App extends Component {
 
                 <View style={{ margin: 5 }}>
 
-                    <Button title="Vorheriger Zitat" onPress={() => this.setState({ index: previousIndex })} />
+                    <Button title="Vorheriger Zitat" onPress={() => this._displayNextQuote("Vorheriger Zitat")} />
 
                 </View>
 
                 <View style={{ margin: 5, marginTop: 10 }}>
 
-                    <Button title="Naechster Zitat" onPress={() => this.setState({ index: nextIndex })} />
+                    <Button title="Naechster Zitat" onPress={() => this._displayNextQuote("Naechster Zitat")} />
 
                 </View>
 
-                <View style={styles.nextButton}>
+                <View style={styles.newButton}>
 
                     <Button title="Neu Zitat" onPress={() => this.setState({ showNewQuoteScreen: true })} />
 
                 </View>
 
-            </View>
+            </SafeAreaView>
         );
     }
 }
@@ -83,7 +119,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    nextButton: {
+    newButton: {
         position: 'absolute',
         right: 5,
         top: 35
