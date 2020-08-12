@@ -14,6 +14,7 @@ export default class NewQuote extends Component {
                 this.props.onSave(null, null);
                 this.setState({ content: null, author: null });
             }} animationType="slide" >
+
                 <View style={styles.container}>
 
                     <TextInput style=

@@ -1,19 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, SafeAreaView, View, Button } from 'react-native';
+import { Alert, StyleSheet, Text, SafeAreaView, View, Button } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Quote from './js/component/Quote';
 import NewQuote from './js/component/NewQuote';
 
-const data = [
-    { text: 'Man lebt nur einmal', author: 'A. sharma' },
-    { text: 'yolo', author: 'Einstein' },
-    { text: 'Love you like i hate you', author: 'D. Belly' },
-    { text: 'these hoes aint loyal', author: 'b. chris' }
-];
+
+// function styledButton(props) {
+//     let Button = null;
+
+//     if (props.visible)
+//         button = (
+//             <View style={props.style} >
+
+//                 <Button title={props.title} onPress={props.onPress} />
+
+//             </View>
+//         );
+//     return button;
+//}
 
 export default class App extends Component {
-    state = { index: 0, showNewQuoteScreen: false, quotes: data };
+    state = { index: 0, showNewQuoteScreen: false, quotes: [], showButtons: true };
 
     _storeData(quotes) {
         AsyncStorage.setItem('QUOTES', JSON.stringify(quotes));
@@ -34,8 +42,34 @@ export default class App extends Component {
             quotes.push({ text, author });
             this._storeData(this.state.quotes);
         }
-        this.setState({ index: quotes.length - 1, showNewQuoteScreen: false, quotes })
+        this.setState({ index: quotes.length - 1, showNewQuoteScreen: false, quotes, showButtons: true })
     };
+
+    _deleteButton() {
+        Alert.alert(
+            'Zitat Wirklich löschen ?',
+            'Zitat wird endgueltig geloescht',
+            [
+                { text: 'Abbrechen' },
+                {
+                    text: 'Löschen', onPress: () => {
+
+                        let index = this.state.index;
+                        let quotes = this.state.quotes;
+
+                        quotes.splice(index, 1);
+                        this._storeData(this.state.quotes);
+                        this.setState({ index: quotes.length - 1, showNewQuoteScreen: false, quotes, showButtons: true })
+
+                        if (this.state.quotes.length === 0) {
+
+                            this.setState({ showButtons: false })
+                        }
+                    }
+                }
+
+            ]);
+    }
 
     _displayNextQuote(buttontype) {
         let index = this.state.index;
@@ -68,15 +102,42 @@ export default class App extends Component {
     componentDidMount() {
 
         this._retrieveData();
+
     }
 
     render() {
         let index = this.state.index;
 
+        let next_button = null;
+        let delete_button = null;
+
         const quote = this.state.quotes[index];
 
+        if (this.state.showButtons === true) {
+
+            next_button =
+
+                <View style={{ margin: 5, marginTop: 10 }} visible={this.state.showButtons}>
+
+                    <Button title="Naechster Zitat" onPress={() => this._displayNextQuote("Naechster Zitat")} />
+
+                </View>
+
+            delete_button =
+
+                <View style={styles.deleteButton} visible={this.state.showButtons}>
+
+                    <Button title="Delete Zitat" onPress={() => this._deleteButton()} />
+
+                </View>
+
+        }
+
         return (
+
             <SafeAreaView style={styles.container}>
+
+                {delete_button}
 
                 <View style={{ margin: 5 }}>
 
@@ -84,7 +145,7 @@ export default class App extends Component {
 
                 </View>
 
-                <Quote text={quote.text} author={quote.author} testprop="test" />
+                {quote === undefined ? (<Text> keine Zitat </Text>) : (<Quote text={quote.text} author={quote.author} testprop="test" />)}
 
                 <StatusBar style="auto" />
 
@@ -94,17 +155,17 @@ export default class App extends Component {
 
                 </View>
 
-                <View style={{ margin: 5, marginTop: 10 }}>
-
-                    <Button title="Naechster Zitat" onPress={() => this._displayNextQuote("Naechster Zitat")} />
-
-                </View>
-
                 <View style={styles.newButton}>
 
                     <Button title="Neu Zitat" onPress={() => this.setState({ showNewQuoteScreen: true })} />
 
                 </View>
+
+
+                <Text> {String(this.state.showButtons)} </Text>
+
+                {next_button}
+
 
             </SafeAreaView>
         );
@@ -122,6 +183,11 @@ const styles = StyleSheet.create({
     newButton: {
         position: 'absolute',
         right: 5,
+        top: 35
+    },
+    deleteButton: {
+        position: 'absolute',
+        left: 5,
         top: 35
     }
 });

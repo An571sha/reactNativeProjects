@@ -1,10 +1,10 @@
-import React, { Component, Fragment} from 'react';
-import { StyleSheet, Text, View} from 'react-native';
+import React, { Component, Fragment } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default class Quote extends Component {
     render() {
         const { text, author } = this.props;
-        return <View style = {textAndAuthStyles.container}>
+        return <View style={textAndAuthStyles.container}>
             <Text style={textAndAuthStyles.text}> {text} </Text>
             <Text style={textAndAuthStyles.author}> -- {author} </Text>
         </View>
@@ -18,7 +18,7 @@ const textAndAuthStyles = StyleSheet.create({
         margin: 10,
     },
     author: {
-       fontSize: 20,
+        fontSize: 20,
         margin: 10,
         textAlign: 'center'
 
