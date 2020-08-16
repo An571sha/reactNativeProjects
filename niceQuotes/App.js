@@ -1,46 +1,46 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { Alert, StyleSheet, Text, SafeAreaView, View, Button } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import { ActivityIndicator, Alert, StyleSheet, Text, SafeAreaView, View, Button } from 'react-native';
 import Quote from './js/component/Quote';
 import NewQuote from './js/component/NewQuote';
+import * as SQLite from 'expo-sqlite';
+import Firebase from './js/Firebase';
 
-
-// function styledButton(props) {
-//     let Button = null;
-
-//     if (props.visible)
-//         button = (
-//             <View style={props.style} >
-
-//                 <Button title={props.title} onPress={props.onPress} />
-
-//             </View>
-//         );
-//     return button;
-//}
+const database = SQLite.openDatabase('quotes.db');
 
 export default class App extends Component {
     state = { index: 0, showNewQuoteScreen: false, quotes: [], showButtons: true };
 
-    _storeData(quotes) {
-        AsyncStorage.setItem('QUOTES', JSON.stringify(quotes));
+    _saveQuoteToDB(text, author) {
+        database.transaction(
+            transaction => transaction.executeSql('INSERT INTO quotes (text, author) VALUES (?,?)', [text, author],
+                (_, result) => (quotes[quotes.length - 1]).id = result.id)
+        )
+
+        // Firebase.db.collection('quotes').add({ text, author });
     }
 
-    _retrieveData = async () => {
+    _removeQuoteFromDB(id) {
+        database.transaction(
+            transaction => transaction.executeSql('DELETE FROM quotes WHERE id  (text, author) VALUES (?,?)'
+            ))
 
-        let value = await AsyncStorage.getItem('QUOTES');
-        if (value != null) {
-            value = JSON.parse(value);
-            this.setState({ quotes: value })
-        }
+    }
+
+    _retrieveData() {
+
+        database.transaction(
+            transaction => transaction.executeSql('SELECT * FROM quotes', [],
+                (_, result) => this.setState({ quotes: result.rows._array }))
+        )
+
     }
 
     _addQoute = (text, author) => {
         let quotes = this.state.quotes
         if (text && author) {
             quotes.push({ text, author });
-            this._storeData(this.state.quotes);
+            this._saveQuoteToDB(text, author);
         }
         this.setState({ index: quotes.length - 1, showNewQuoteScreen: false, quotes, showButtons: true })
     };
@@ -57,8 +57,8 @@ export default class App extends Component {
                         let index = this.state.index;
                         let quotes = this.state.quotes;
 
+                        this._removeQuoteFromDB(quotes[index].id)
                         quotes.splice(index, 1);
-                        this._storeData(this.state.quotes);
                         this.setState({ index: quotes.length - 1, showNewQuoteScreen: false, quotes, showButtons: true })
 
                         if (this.state.quotes.length === 0) {
@@ -100,8 +100,12 @@ export default class App extends Component {
     }
 
     componentDidMount() {
-
+        Firebase.init();
+        database.transaction(
+            transaction => transaction.executeSql('CREATE TABLE IF NOT EXISTS quotes (id INTEGER PRIMARY KET NOT NULL, text TEXT, author TEXT')
+        )
         this._retrieveData();
+
 
     }
 
