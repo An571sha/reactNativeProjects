@@ -1,13 +1,16 @@
-import {StatusBar} from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack'
 import * as icon from '@expo/vector-icons';
 import HomeScreen from './screens/HomeScreen';
 import Einstellung from './screens/SettingScreen';
+import FriendScreen from './screens/FriendScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 const tab1_title = 'Freunde';
 const tab2_title = 'Einstellung';
 
@@ -15,29 +18,32 @@ export default function AppNavigator() {
 
     return (
         <NavigationContainer>
-            <Tab.Navigator>
+            <Tab.Navigator
+                tabBarOptions={{
+                    activeTintColor: 'orange'
+                }}>
                 <Tab.Screen name='Home'
-                            component={HomeScreen}
-                            options={{
-                                title: tab1_title,
-                                tabBarIcon: ({
-                                                 focused, size, color
-                                             }) => {
-                                    return _genTabBarIcon('home-outline',
-                                        'home', focused, size, color)
-                                }
-                            }}/>
+                    component={HomeStack}
+                    options={{
+                        title: tab1_title,
+                        tabBarIcon: ({
+                            focused, size, color
+                        }) => {
+                            return _genTabBarIcon('home-outline',
+                                'home', focused, size, color)
+                        }
+                    }} />
                 <Tab.Screen name='Settings'
-                            component={Einstellung}
-                            options={{
-                                title: tab2_title,
-                                tabBarIcon: ({
-                                                 focused, size, color
-                                             }) => {
-                                    return _genTabBarIcon('settings-outline',
-                                        'settings', focused, size, color)
-                                }
-                            }}
+                    component={Einstellung}
+                    options={{
+                        title: tab2_title,
+                        tabBarIcon: ({
+                            focused, size, color
+                        }) => {
+                            return _genTabBarIcon('settings-outline',
+                                'settings', focused, size, color)
+                        }
+                    }}
                 />
             </Tab.Navigator>
         </NavigationContainer>
@@ -49,7 +55,16 @@ function _genTabBarIcon(outline_name, focused_name, focused, size, color) {
     return <icon.MaterialCommunityIcons
         name={focused_icon}
         size={size}
-        color={color}/>
+        color={color} />
+}
+
+function HomeStack() {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            <Stack.Screen name="FriendScreen" component={FriendScreen} />
+        </Stack.Navigator>
+    )
 }
 
 
