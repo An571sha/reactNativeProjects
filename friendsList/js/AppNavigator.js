@@ -61,8 +61,16 @@ function _genTabBarIcon(outline_name, focused_name, focused, size, color) {
 function HomeStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="HomeScreen" component={HomeScreen} />
-            <Stack.Screen name="FriendScreen" component={FriendScreen} />
+            <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="FriendScreen" component={FriendScreen} options={({ route }) => {
+
+                const which_friend = route.params.friend.first;
+
+                return {
+                    headerTitle: which_friend,
+                };
+
+            }} />
         </Stack.Navigator>
     )
 }
