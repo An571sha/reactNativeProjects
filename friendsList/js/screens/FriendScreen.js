@@ -4,11 +4,11 @@ import React, { Component } from "react";
 
 export default class FriendScreen extends Component {
     render() {
-
+        const friend = this.props.route.params.friend;
         return (
             <ScrollView contentContainerStyle={styles.container} style={styles.scrollView}>
-                <Text fontSize={styles.titleText}>{this.props.route.params.friend.first}</Text>
-                <Image style={styles.image} source={require('../../assets/favicon.png')} />
+                <Text fontSize={styles.titleText}>{friend.name.first}</Text>
+                <Image style={styles.image} source={{ uri: friend.picture.large }} />
             </ScrollView>
         );
     }

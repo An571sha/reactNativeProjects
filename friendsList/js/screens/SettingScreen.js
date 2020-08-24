@@ -7,8 +7,8 @@ const DATA = [
         data: [{ name: "Text size" }, { name: "Text color" }, { name: "Text style" }]
     },
     {
-        title: "Export",
-        data: [{ name: "PDF" }, { name: "TXT" }]
+        title: "Developer",
+        data: [{ name: "Name: Animesh Sharma" }, { name: "email: anim_esh@yahoo.co.in" }]
     },
     {
         title: "Version",

@@ -64,7 +64,7 @@ function HomeStack() {
             <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
             <Stack.Screen name="FriendScreen" component={FriendScreen} options={({ route }) => {
 
-                const which_friend = route.params.friend.first;
+                const which_friend = route.params.friend.name.first;
 
                 return {
                     headerTitle: which_friend,

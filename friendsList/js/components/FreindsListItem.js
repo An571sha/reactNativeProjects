@@ -7,9 +7,9 @@ export default function (props) {
     const { friend, onPress } = props;
     return (<View style={styles.container}>
         <TouchableOpacity onPress={onPress} style={styles.button}>
-            <Image style={styles.image} source={require('../../assets/favicon.png')} />
+            <Image style={styles.image} source={{ uri: friend.picture.thumbnail }} />
             <View style={styles.text_box}>
-                <Text>{friend.first}{' '}{friend.last}</Text>
+                <Text>{friend.name.first}{' '}{friend.name.last}</Text>
                 <Text>{friend.email}</Text>
             </View>
         </TouchableOpacity>
