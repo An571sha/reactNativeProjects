@@ -1,15 +1,29 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HomeScreen from './HomeScreen';
 import SettingsScreen from './SettingsScreen';
 import * as icon from '@expo/vector-icons';
 
-const Tab = createBottomTabNavigator();
+
 
 export default function MainScreen(): JSX.Element {
-    return (
+    const navigation = useNavigation();
+    const Tab = createBottomTabNavigator();
+    const route = useRoute<RouteProp<ParamList, 'MainScreen'>>();
 
+    type ParamList = {
+        MainScreen: {
+            title: string;
+        };
+    };
+
+    useEffect(() => navigation.setOptions({
+        title: route.params.title
+    }));
+
+    return (
         <Tab.Navigator
             tabBarOptions={{
                 activeTintColor: 'orange'
@@ -46,3 +60,5 @@ export default function MainScreen(): JSX.Element {
         </Tab.Navigator>
     )
 }
+
+

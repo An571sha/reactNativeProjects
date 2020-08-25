@@ -1,21 +1,23 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
-import { useLinkProps, NavigationContainer, useNavigation } from '@react-navigation/native';
-import * as Google from "expo-google-app-auth";
-
+import { useNavigation } from '@react-navigation/native';
+import LoginButtons from '../components/LoginButtons';
 
 export interface ISignUpData {
     email: string;
     password: string;
 }
 
-const IOS_CLIENT_ID = "278233748567-5sqgq05sb2ft3ndeb5pc61strl7b1tr0.apps.googleusercontent.com";
-const ANDROID_CLIENT_ID = "278233748567-4a83qasgi3ugnhrrpe1bj4893lmg8f1t.apps.googleusercontent.com";
-
 export default function LoginScreen(): JSX.Element {
 
     const [signUpData, setSignUpData] = useState({})
     const navigation = useNavigation();
+
+    //for facebook login
+    const [isLoggedin, setLoggedinStatus] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [isImageLoading, setImageLoadStatus] = useState(false);
+
 
     return (
         <View style={styles.container}>
@@ -27,6 +29,7 @@ export default function LoginScreen(): JSX.Element {
                     placeholderTextColor="#003f5c"
                     onChangeText={text => setSignUpData({ email: text })} />
             </View>
+
             <View style={styles.inputView} >
                 <TextInput
                     secureTextEntry
@@ -35,43 +38,25 @@ export default function LoginScreen(): JSX.Element {
                     placeholderTextColor="#003f5c"
                     onChangeText={text => setSignUpData({ password: text })} />
             </View>
+
             <TouchableOpacity>
                 <Text style={styles.forgot}>Forgot Password?</Text>
             </TouchableOpacity>
+
             <TouchableOpacity style={styles.loginBtn}
-                onPress={() => signInWithGoogle()}
             /*onPress={() => navigation.navigate('MainScreen')}*/>
                 <Text style={styles.loginText} >LOGIN</Text>
             </TouchableOpacity>
+
             <TouchableOpacity>
                 <Text style={styles.loginText}>Signup</Text>
             </TouchableOpacity>
 
+            <LoginButtons />
+
         </View>
     );
 }
-
-const signInWithGoogle = async () => {
-    try {
-        const result = await Google.logInAsync({
-            iosClientId: IOS_CLIENT_ID,
-            androidClientId: ANDROID_CLIENT_ID,
-            scopes: ["profile", "email"]
-        });
-
-        if (result.type === "success") {
-            console.log("LoginScreen.js.js 21 | ", result.user.givenName);
-
-            return result.accessToken;
-
-        } else {
-            return { cancelled: true };
-        }
-    } catch (e) {
-        console.log('LoginScreen.js.js 30 | Error with login', e);
-        return { error: true };
-    }
-};
 
 
 const styles = StyleSheet.create({
@@ -117,5 +102,4 @@ const styles = StyleSheet.create({
     loginText: {
         color: "white"
     }
-
 });

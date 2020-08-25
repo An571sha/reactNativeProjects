@@ -15,7 +15,12 @@ export default function AppNavigator(): JSX.Element {
         <NavigationContainer>
             <Stack.Navigator>
                 <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="MainScreen" component={MainScreen} />
+                <Stack.Screen
+                    name="MainScreen"
+                    component={MainScreen} options={{
+                        title: 'Welcome',
+                        headerStyle: { backgroundColor: 'turquoise' }
+                    }} />
                 <Stack.Screen name="InfoScreen" component={InfoScreen} />
             </Stack.Navigator>
         </NavigationContainer>
