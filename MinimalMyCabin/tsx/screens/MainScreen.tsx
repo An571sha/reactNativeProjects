@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useState } from 'react';
 import HomeScreen from './HomeScreen';
 import SettingsScreen from './SettingsScreen';
+import OfferScreen from './OfferScreen';
 import * as icon from '@expo/vector-icons';
 
 
@@ -31,7 +32,21 @@ export default function MainScreen(): JSX.Element {
             <Tab.Screen name='Home'
                 component={HomeScreen}
                 options={{
-                    title: 'Home',
+                    title: 'Search Accomodation',
+                    tabBarIcon: ({
+                        focused, size, color
+                    }) => {
+                        return (<icon.MaterialCommunityIcons
+                            name={'campfire'}
+                            size={size}
+                            color={color} />)
+                    }
+                }}
+            />
+            <Tab.Screen name='Offer'
+                component={OfferScreen}
+                options={{
+                    title: 'Offer Accomodation',
                     tabBarIcon: ({
                         focused, size, color
                     }) => {
@@ -45,7 +60,7 @@ export default function MainScreen(): JSX.Element {
             <Tab.Screen name='Settings'
                 component={SettingsScreen}
                 options={{
-                    title: 'Setting',
+                    title: 'Settings',
                     tabBarIcon: ({
                         focused, size, color
                     }) => {

@@ -21,7 +21,10 @@ export default function AppNavigator(): JSX.Element {
                         title: 'Welcome',
                         headerStyle: { backgroundColor: 'turquoise' }
                     }} />
-                <Stack.Screen name="InfoScreen" component={InfoScreen} />
+                <Stack.Screen name="InfoScreen" component={InfoScreen} options={{
+                    title: 'Welcome',
+                    headerStyle: { backgroundColor: 'turquoise' }
+                }} />
             </Stack.Navigator>
         </NavigationContainer>
     )

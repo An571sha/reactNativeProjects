@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
@@ -9,18 +9,18 @@ export default function LoginButtons(): JSX.Element {
 
     const navigation = useNavigation();
 
-    type RouteParams = {
-        titleText: string;
-    }
+    let [authState, setAuthState] = useState(null);
 
     return (
         <View>
 
             <View style={{ padding: 10, marginBottom: 10 }}>
 
-                <FontAwesome.Button name="google" style={styles.iconButton} onPress={() => signInWithGoogle().then((data) => {
-                    navigation.navigate('MainScreen', { title: `Hello ${data}` })
-                })
+                <FontAwesome.Button name="google" style={styles.iconButton} onPress={() => {
+                    signInWithGoogle().then((data) => {
+                        navigation.navigate('MainScreen', { title: `Hello ${data[0]} ${data[1]}` })
+                    })
+                }
                 }>
                     Sign in with Google
     </FontAwesome.Button>
@@ -44,6 +44,7 @@ export default function LoginButtons(): JSX.Element {
 
 const IOS_CLIENT_ID = "278233748567-5sqgq05sb2ft3ndeb5pc61strl7b1tr0.apps.googleusercontent.com";
 const ANDROID_CLIENT_ID = "278233748567-4a83qasgi3ugnhrrpe1bj4893lmg8f1t.apps.googleusercontent.com";
+const STORAGE_KEY_GOOGLE = 'CustomGoogleOAuthKey';
 const FACEBOOK_APP_ID = "307438757143908";
 
 
@@ -58,7 +59,7 @@ const styles = StyleSheet.create(
     });
 
 
-const signInWithGoogle = async (): Promise<string | undefined> => {
+const signInWithGoogle = async (): Promise<(string | undefined | null)[]> => {
     try {
         const result = await Google.logInAsync({
             iosClientId: IOS_CLIENT_ID,
@@ -67,18 +68,19 @@ const signInWithGoogle = async (): Promise<string | undefined> => {
         });
 
         if (result.type === "success") {
-            console.log("succesfully logged in - | ", result.user.givenName);
-            return result.user.givenName;
+            console.log("succesfully logged in - | ", result.user.givenName, result.user.familyName);
+            console.log("token", result.accessToken);
+            return [result.user.givenName, result.user.familyName, result.accessToken];
 
         } else {
 
-            return "no access token available";
+            return ["no access token available"];
 
         }
 
     } catch (e) {
         console.log('Error with login', e);
-        return 'Error with login';
+        return ['Error with login'];
     }
 };
 
@@ -110,4 +112,12 @@ const signinWithFacebook = async (): Promise<String | undefined> => {
     } catch ({ message }) {
         alert(`Facebook Login Error: ${message}`);
     }
+};
+
+async function cacheAuthAsync(storageKey: string, token: string | null) {
+    return await AsyncStorage.setItem(storageKey, JSON.stringify(token));
+}
+
+async function readToken(storageKey: string) {
+    return await AsyncStorage.getItem(storageKey);
 }
