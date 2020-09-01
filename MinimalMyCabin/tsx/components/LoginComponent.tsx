@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Google from "expo-google-app-auth";
 import * as Facebook from 'expo-facebook';
 
-export default function LoginButtons(): JSX.Element {
+export default function LoginComponent(): JSX.Element {
 
     const navigation = useNavigation();
 

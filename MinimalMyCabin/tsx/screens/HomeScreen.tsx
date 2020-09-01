@@ -1,7 +1,7 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, View, AsyncStorage } from 'react-native';
 import React, { useState, useEffect, useMemo } from 'react';
 import mockJsonData from '../../assets/mockData/MOCK_DATA.json';
-import HomeScreenListItem from '../components/HomeScreenListItem';
+import HomeScreenListComponent from '../components/HomeScreenListComponent';
 import { useNavigation } from '@react-navigation/native';
 import { HeaderTitle } from '@react-navigation/stack';
 
@@ -39,8 +39,8 @@ export default function HomeScreen(): JSX.Element {
                 keyExtractor={item => item.id.toString()}
                 renderItem={
 
-                    ({ item }) => <HomeScreenListItem props_extension={item}
-                        onPress={() => navigation.navigate('InfoScreen', { title: { item } })} />}
+                    ({ item }) => <HomeScreenListComponent props_extension={item}
+                                                           onPress={() => navigation.navigate('InfoScreen', { title: { item } })} />}
                 // ItemSeparatorComponent={() => <View style={styles.listSeperator} />}
 
                 // Performance settings
@@ -60,7 +60,7 @@ function memoizedValue(item: any, jsonData: undefined) {
 }
 
 function render_list_item(item: any) {
-    return <HomeScreenListItem props_extension={item} />
+    return <HomeScreenListComponent props_extension={item} />
 }
 
 

@@ -6,7 +6,7 @@ import { Card } from 'react-native-elements';
 
 
 
-export default function HomeScreenListItem(props: any): JSX.Element {
+export default function HomeScreenListComponent(props: any): JSX.Element {
     const { props_extension, onPress } = props;
     return (
         <View style={styles.container}>

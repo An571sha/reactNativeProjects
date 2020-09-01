@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import LoginButtons from '../components/LoginButtons';
+import LoginComponent from '../components/LoginComponent';
+
 
 export interface ISignUpData {
     email: string;
@@ -11,7 +12,6 @@ export interface ISignUpData {
 export default function LoginScreen(): JSX.Element {
 
     const [signUpData, setSignUpData] = useState({})
-    const navigation = useNavigation();
 
     //for facebook login
     const [isLoggedin, setLoggedinStatus] = useState(false);
@@ -22,23 +22,6 @@ export default function LoginScreen(): JSX.Element {
     return (
         <View style={styles.container}>
             <Text style={styles.logo}>MyCabin</Text>
-            <View style={styles.inputView} >
-                <TextInput
-                    style={styles.inputText}
-                    placeholder="Email..."
-                    placeholderTextColor="#003f5c"
-                    onChangeText={text => setSignUpData({ email: text })} />
-            </View>
-
-            <View style={styles.inputView} >
-                <TextInput
-                    secureTextEntry
-                    style={styles.inputText}
-                    placeholder="Password..."
-                    placeholderTextColor="#003f5c"
-                    onChangeText={text => setSignUpData({ password: text })} />
-            </View>
-
             <TouchableOpacity>
                 <Text style={styles.forgot}>Forgot Password?</Text>
             </TouchableOpacity>
@@ -52,7 +35,7 @@ export default function LoginScreen(): JSX.Element {
                 <Text style={styles.loginText}>Signup</Text>
             </TouchableOpacity>
 
-            <LoginButtons />
+            <LoginComponent />
 
         </View>
     );
