@@ -15,7 +15,7 @@ export default function HomeScreen(): JSX.Element {
 
     useEffect(() => {
 
-        // _load_json_from_storage(setJsonData,s setIsLoading)
+        // _load_json_from_storage(setJsonData,setIsLoading)
         setJsonData(mockJsonData);
         setIsLoading(false)
 
@@ -44,7 +44,7 @@ export default function HomeScreen(): JSX.Element {
                 // ItemSeparatorComponent={() => <View style={styles.listSeperator} />}
 
                 // Performance settings
-                removeClippedSubviews={true} // Unmount components when outside of window
+                removeClippedSubviews={false} // Unmount components when outside of window
                 initialNumToRender={10} // Reduce initial render amount
                 maxToRenderPerBatch={10} // Reduce number in each render batch
                 updateCellsBatchingPeriod={100} // Increase time between renders
