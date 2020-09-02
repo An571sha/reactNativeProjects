@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
-import React, { useState } from 'react';
+import {StyleSheet, BackHandler, View, AsyncStorage, TouchableOpacity, Alert} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Google from "expo-google-app-auth";
@@ -11,6 +11,11 @@ export default function LoginComponent(): JSX.Element {
 
     let [authState, setAuthState] = useState(null);
 
+    useEffect(() => {
+            signInWithToken()
+
+    });
+
     return (
         <View>
 
@@ -18,7 +23,16 @@ export default function LoginComponent(): JSX.Element {
 
                 <FontAwesome.Button name="google" style={styles.iconButton} onPress={() => {
                     signInWithGoogle().then((data) => {
-                        navigation.navigate('MainScreen', { title: `Hello ${data[0]} ${data[1]}` })
+                      //  navigation.navigate('MainScreen', { title: `Hello ${data[0]} ${data[1]}`} )
+                        navigation.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'MainScreen',
+                                    params: { title: `Hello ${data[0]} ${data[1]}` },
+                                },
+                            ],
+                        })
                     })
                 }
                 }>
@@ -54,12 +68,27 @@ const styles = StyleSheet.create(
             width: 300,
             height: 50,
             justifyContent: 'center',
-            backgroundColor: "orange"
+            backgroundColor: "turquoise"
+        },
+
+        loginBtn: {
+            backgroundColor: "orange",
+            borderRadius: 25,
+            height: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 40,
+            marginBottom: 10
+        },
+
+        loginText: {
+            color: "white"
         }
     });
 
 
 const signInWithGoogle = async (): Promise<(string | undefined | null)[]> => {
+
     try {
         const result = await Google.logInAsync({
             iosClientId: IOS_CLIENT_ID,
@@ -70,6 +99,7 @@ const signInWithGoogle = async (): Promise<(string | undefined | null)[]> => {
         if (result.type === "success") {
             console.log("succesfully logged in - | ", result.user.givenName, result.user.familyName);
             console.log("token", result.accessToken);
+            cacheAuthAsync(STORAGE_KEY_GOOGLE, result.accessToken);
             return [result.user.givenName, result.user.familyName, result.accessToken];
 
         } else {
@@ -121,3 +151,21 @@ async function cacheAuthAsync(storageKey: string, token: string | null) {
 async function readToken(storageKey: string) {
     return await AsyncStorage.getItem(storageKey);
 }
+
+async function signInWithToken(): Promise<void> {
+    await readToken(STORAGE_KEY_GOOGLE).then(async accessToken => {
+        console.log('stored tpken' + accessToken);
+        await fetch('https://www.googleapis.com/userinfo/v2/me', {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        }).then( response => {
+            console.log('fired response 1 ' + response.status);
+            if (response.status.toString() === '200') {
+                response.json().then( result => {
+                    console.log('fired response 2' + result);
+                })
+            }
+        })
+
+    })
+}
+
